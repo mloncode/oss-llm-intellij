@@ -9,7 +9,6 @@ class TestAction: AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val logger = Logger.getInstance("Google answer")
         logger.warn("Requesting...")
-        logger.warn(Requester.getModelSuggestions())
+        logger.warn(Requester.getModelSuggestionsUpdated())
     }
-
 }
