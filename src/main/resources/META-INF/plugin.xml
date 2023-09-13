@@ -15,4 +15,10 @@
     <applicationListeners>
         <listener class="com.github.bzz.intellij.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
+    <actions>
+        <action id="com.github.bzz.intellij.actions.TestAction" class="com.github.bzz.intellij.actions.TestAction"
+                text="TEST" description="Tests that connection works properly">
+            <add-to-group group-id="HelpMenu" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
