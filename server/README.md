@@ -1,4 +1,4 @@
-*** Python server ***
+# Python server
 Usage:
 
 `python server.py [-p PORT] [-a ADDRESS| addres]`
