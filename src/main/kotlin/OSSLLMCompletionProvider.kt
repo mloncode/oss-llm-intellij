@@ -4,7 +4,9 @@ import com.intellij.codeInsight.inline.completion.InlineCompletionElement
 import com.intellij.codeInsight.inline.completion.InlineCompletionProvider;
 import com.intellij.codeInsight.inline.completion.InlineCompletionRequest
 import com.intellij.openapi.editor.event.DocumentEvent
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Experimental
 class OSSLLMCompletionProvider : InlineCompletionProvider {
 
     override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> {
