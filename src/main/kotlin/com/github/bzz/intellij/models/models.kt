@@ -1,8 +1,11 @@
 package com.github.bzz.intellij.com.github.bzz.intellij.models
 
-data class CodeCompletionModel(val model: String)
+import java.util.concurrent.atomic.AtomicInteger
 
-val availableModels: List<CodeCompletionModel> = listOf(
-    "starcoder",
-    "codet5"
-).map { CodeCompletionModel(it) }
+
+object AvailableModels {
+
+    val currentModelIndex = AtomicInteger(0)
+
+    val modelsList: List<String> = listOf("codet5-small")
+}
