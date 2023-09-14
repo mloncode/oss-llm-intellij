@@ -15,7 +15,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self._set_headers()
         content_len = int(self.headers.get("Content-Length", 0))
         post_body = self.rfile.read(content_len)
-        text_received = post_body.decode("utf-8")
+        text_received = json.loads(post_body)["prompt"]
         json_bytes = json.dumps(
             {"results": [{"text": text_received}, {"text": text_received + "v2"}]}
         ).encode("utf-8")
