@@ -7,6 +7,6 @@ import com.intellij.openapi.wm.IdeFrame
 internal class MyApplicationActivationListener : ApplicationActivationListener {
 
     override fun applicationActivated(ideFrame: IdeFrame) {
-        thisLogger().warn("Inttelij IDEA Activated.")
+        thisLogger().warn("Intellij IDEA Activated.")
     }
 }
