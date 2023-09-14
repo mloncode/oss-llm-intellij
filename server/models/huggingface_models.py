@@ -13,10 +13,6 @@ import torch
 def llama_model(text: str) -> str:
     tokenizer = AutoTokenizer.from_pretrained("daryl149/llama-2-7b-chat-hf")
     model = AutoModel.from_pretrained("daryl149/llama-2-7b-chat-hf")
-
-
-    # tokenizer = LlamaTokenizer.from_pretrained("/output/path")
-    # model = LlamaForCausalLM.from_pretrained("/output/path")
     tokenized = tokenizer.encode([text])
     output = model.generate(**tokenized)
     return output
@@ -33,22 +29,24 @@ def codet5_model(text: str) -> str:
 
     encoding = tokenizer("def print_hello_world():", return_tensors="pt").to(device)
     encoding['decoder_input_ids'] = encoding['input_ids'].clone()
-    outputs = model.generate(**encoding, max_length=15)
+    outputs = model.generate(**encoding, max_length=8)
     print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 '''
 
 
 def codet5_base_model(text: str):
+    device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
     tokenizer = RobertaTokenizer.from_pretrained('Salesforce/codet5-base')
-    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base')
+    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base').to(device)
     input_ids = tokenizer(text, return_tensors="pt").input_ids
     generated_ids = model.generate(input_ids, max_length=8)
     print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
 
 
 def codet5_small_model(text: str):
+    device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
     tokenizer = RobertaTokenizer.from_pretrained('Salesforce/codet5-small')
-    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-small')
+    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-small').to(device)
     input_ids = tokenizer(text, return_tensors="pt").input_ids
     generated_ids = model.generate(input_ids, max_length=8)
     print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
@@ -60,13 +58,13 @@ def starcoder_model(text: str):
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     model = AutoModelForCausalLM.from_pretrained(checkpoint).to(device)
     inputs = tokenizer.encode(text, return_tensors="pt").to(device)
-    outputs = model.generate(inputs)
+    outputs = model.generate(inputs, max_length=8)
     print(tokenizer.decode(outputs[0]))
 
 
 def llama_model(text: str):
     model = "codellama/CodeLlama-7b-hf"
-    tokenizer = AutoTokenizer.from_pretrained(model)
+    tokenizer = AutoTokenizer.from_pretrained(model, use_fast=True)
     pipeline = transformers.pipeline(
         "text-generation",
         model=model,
