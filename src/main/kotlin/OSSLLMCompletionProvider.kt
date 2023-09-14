@@ -31,4 +31,3 @@ class OSSLLMCompletionProvider : InlineCompletionProvider {
         return true
     }
 }
-// Interrupted, IOException
