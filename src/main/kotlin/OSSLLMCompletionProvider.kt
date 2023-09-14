@@ -7,6 +7,7 @@ import com.intellij.codeInsight.inline.completion.InlineCompletionProvider;
 import com.intellij.codeInsight.inline.completion.InlineCompletionRequest
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.event.DocumentEvent
+import java.io.IOException
 
 class OSSLLMCompletionProvider : InlineCompletionProvider {
 
@@ -17,6 +18,12 @@ class OSSLLMCompletionProvider : InlineCompletionProvider {
         } catch(exception: RuntimeException) {
             thisLogger().warn("Message: ${exception.message}")
             return emptyList()
+        } catch(ioexception: IOException) {
+            thisLogger().warn("Message: ${ioexception.message}")
+            return emptyList()
+        } catch(interrupted_exception: InterruptedException) {
+            thisLogger().warn("Message: ${interrupted_exception.message}")
+            return emptyList()
         }
     }
 
@@ -24,3 +31,4 @@ class OSSLLMCompletionProvider : InlineCompletionProvider {
         return true
     }
 }
+// Interrupted, IOException
