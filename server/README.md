@@ -11,3 +11,7 @@ Call to API using curl:
 `curl -X POST [ADDRESS]:[PORT] --data "your_text_here"`
 
 In response json in form `{"text": "another_text_here"}` will be returned.
+
+Example:
+
+`python server.py -p 8000 -a localhost`
