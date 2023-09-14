@@ -1,7 +1,7 @@
 # Python server
 Usage:
 
-`python server.py [-p PORT] [-a ADDRESS| addres]`
+`python server.py [-p PORT] [-a ADDRESS| address]`
 
 address must be in form `your.address.com`, e.g. without `http` prefix.
 Default address is `localhost`, default port is `8000`
