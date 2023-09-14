@@ -15,7 +15,6 @@ object Requester {
         val request = HttpRequest.newBuilder()
             .uri(URI.create("http://${ip ?: "localhost"}:${port ?: 8000}"))
             .POST(HttpRequest.BodyPublishers.ofString(context))
-            .header("User-Agent", "Mozilla/5.0")
             .timeout(java.time.Duration.ofSeconds(10))
             .build()
 
