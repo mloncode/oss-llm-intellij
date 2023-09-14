@@ -1,5 +1,6 @@
 package com.github.bzz.intellij.toolWindow
 
+import ai.grazie.utils.capitalize
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
@@ -9,8 +10,11 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.content.ContentFactory
 import com.github.bzz.intellij.MyBundle
+import com.github.bzz.intellij.com.github.bzz.intellij.models.availableModels
 import com.github.bzz.intellij.services.MyProjectService
+import javax.swing.BoxLayout
 import javax.swing.JButton
+import javax.swing.JPanel
 
 
 class MyToolWindowFactory : ToolWindowFactory {
@@ -29,14 +33,22 @@ class MyToolWindowFactory : ToolWindowFactory {
         private val service = toolWindow.project.service<MyProjectService>()
 
         fun getContent() = JBPanel<JBPanel<*>>().apply {
-            val label = JBLabel(MyBundle.message("randomLabel", "?"))
-
-            add(label)
-            add(JButton(MyBundle.message("shuffle")).apply {
-                addActionListener {
-                    label.text = MyBundle.message("randomLabel", service.getRandomNumber())
+            layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+            val headerPanel = JPanel()
+            headerPanel.add(JBLabel("Available models"))
+            add(headerPanel)
+            availableModels.forEach {
+                val label = JBLabel(it.model.capitalize())
+                val jPanel = JPanel()
+                jPanel.apply {
+                    add(label)
+                    add(JButton("Apply").apply {
+                        addActionListener {
+                        }
+                    })
                 }
-            })
+                add(jPanel)
+            }
         }
     }
 }
