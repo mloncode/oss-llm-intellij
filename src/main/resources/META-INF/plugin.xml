@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.bzz.intellij</id>
-    <name>intellij Template</name>
+    <name>AutocompletionLLM</name>
     <vendor>bzz</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -16,4 +16,10 @@
     <applicationListeners>
         <listener class="com.github.bzz.intellij.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
+    <actions>
+        <action id="com.github.bzz.intellij.actions.TestAction" class="com.github.bzz.intellij.actions.TestAction"
+                text="TEST" description="Tests that connection works properly">
+            <add-to-group group-id="HelpMenu" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
