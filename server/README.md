@@ -1,9 +1,8 @@
 # Python server
 Usage:
 
-`python server.py [-p PORT] [-a ADDRESS| address]`
+`python server.py [-p PORT] [-a HOSTNAME| address]`
 
-address must be in form `your.address.com`, e.g. without `http` prefix.
 Default address is `localhost`, default port is `8000`
 
 Call to API using curl:
