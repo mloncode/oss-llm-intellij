@@ -7,8 +7,8 @@ import com.intellij.openapi.diagnostic.Logger
 
 class TestAction: AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val logger = Logger.getInstance("Google answer")
+        val logger = Logger.getInstance("Server Answer")
         logger.warn("Requesting...")
-        logger.warn(Requester.getModelSuggestionsUpdated())
+        logger.warn(Requester.getModelSuggestions("null_context").text)
     }
 }

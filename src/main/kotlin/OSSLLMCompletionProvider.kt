@@ -1,5 +1,7 @@
 package com.github.bzz.intellij
 
+import com.github.bzz.intellij.requests.Requester
+import com.google.gson.JsonSyntaxException
 import com.intellij.codeInsight.inline.completion.InlineCompletionElement
 import com.intellij.codeInsight.inline.completion.InlineCompletionProvider;
 import com.intellij.codeInsight.inline.completion.InlineCompletionRequest
@@ -8,7 +10,12 @@ import com.intellij.openapi.editor.event.DocumentEvent
 class OSSLLMCompletionProvider : InlineCompletionProvider {
 
     override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> {
-        return listOf(InlineCompletionElement("public static void"),InlineCompletionElement("this is a test \uD83E\uDD16"),)
+        try {
+            val proposal = Requester.getModelSuggestions(request.document.text).text ?: return emptyList()
+            return listOf(InlineCompletionElement(proposal))
+        } catch(_: RuntimeException) {
+            return emptyList()
+        }
     }
 
     override fun isEnabled(event: DocumentEvent): Boolean {
