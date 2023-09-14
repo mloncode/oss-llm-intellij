@@ -13,9 +13,7 @@ class OSSLLMCompletionProvider : InlineCompletionProvider {
 
     override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> {
         try {
-            val caretPosition = runReadAction {
-                request.editor.caretModel.primaryCaret.selectionStart
-            }
+            val caretPosition = request.startOffset
             val proposal = Requester.getModelSuggestions(
                 request.document.text.substring(0, caretPosition)
             ).text ?: return emptyList()
