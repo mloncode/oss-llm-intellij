@@ -3,9 +3,6 @@ package com.github.bzz.intellij.toolWindow
 import ai.grazie.utils.capitalize
 import com.github.bzz.intellij.com.github.bzz.intellij.models.AvailableModels.currentModelIndex
 import com.github.bzz.intellij.com.github.bzz.intellij.models.AvailableModels.modelsList
-import com.github.bzz.intellij.services.MyProjectService
-import com.github.weisj.jsvg.f
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -18,7 +15,7 @@ import javax.swing.JButton
 import javax.swing.JPanel
 
 
-class MyToolWindowFactory : ToolWindowFactory {
+class LLMToolWindowFactory : ToolWindowFactory {
 
     companion object {
         val NO_LLM =
@@ -28,16 +25,14 @@ class MyToolWindowFactory : ToolWindowFactory {
 
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val myToolWindow = MyToolWindow(toolWindow)
-        val content = ContentFactory.getInstance().createContent(myToolWindow.getContent(), null, false)
+        val llmToolWindow = LLMToolWindow()
+        val content = ContentFactory.getInstance().createContent(llmToolWindow.getContent(), null, false)
         toolWindow.contentManager.addContent(content)
     }
 
     override fun shouldBeAvailable(project: Project) = true
 
-    class MyToolWindow(toolWindow: ToolWindow) {
-
-        private val service = toolWindow.project.service<MyProjectService>()
+    class LLMToolWindow {
 
         fun getContent() = JBPanel<JBPanel<*>>().apply {
             layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
@@ -49,7 +44,6 @@ class MyToolWindowFactory : ToolWindowFactory {
 
             if (modelsList.isNotEmpty()) {
                 val footerLabel = JBLabel("Current LLM: ${modelsList[currentModelIndex.get()]}")
-
                 modelsList.forEachIndexed { index, model ->
                     add(JPanel().apply {
                         add(JBLabel(model.capitalize()))

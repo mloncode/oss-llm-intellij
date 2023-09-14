@@ -7,5 +7,5 @@ object AvailableModels {
 
     val currentModelIndex = AtomicInteger(0)
 
-    val modelsList: List<String> = listOf("codet5-small")
+    val modelsList: List<String> = listOf("proxy-model", "other proxy-model")
 }
