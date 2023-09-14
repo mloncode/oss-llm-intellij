@@ -2,6 +2,8 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import argparse
 import json
 
+models = [{"model_name": "StarCoder"}, {"model_name": "codellama"}, {"model_name": "codet5"}]
+
 
 class RequestHandler(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -14,8 +16,15 @@ class RequestHandler(BaseHTTPRequestHandler):
         content_len = int(self.headers.get("Content-Length", 0))
         post_body = self.rfile.read(content_len)
         text_received = post_body.decode("utf-8")
-        json_bytes = json.dumps({"text": text_received}).encode("utf-8")
+        json_bytes = json.dumps(
+            {"results": [{"text": text_received}, {"text": text_received + "v2"}]}
+        ).encode("utf-8")
         self.wfile.write(json_bytes)
+
+    def do_GET(self):
+        self._set_headers()
+        models_json = json.dumps({"models": models})
+        self.wfile.write(models_json.encode("utf-8"))
 
 
 def run(port, addr):
