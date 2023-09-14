@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException
 import com.intellij.codeInsight.inline.completion.InlineCompletionElement
 import com.intellij.codeInsight.inline.completion.InlineCompletionProvider;
 import com.intellij.codeInsight.inline.completion.InlineCompletionRequest
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.event.DocumentEvent
 
 class OSSLLMCompletionProvider : InlineCompletionProvider {
@@ -13,7 +14,8 @@ class OSSLLMCompletionProvider : InlineCompletionProvider {
         try {
             val proposal = Requester.getModelSuggestions(request.document.text).text ?: return emptyList()
             return listOf(InlineCompletionElement(proposal))
-        } catch(_: RuntimeException) {
+        } catch(exception: RuntimeException) {
+            thisLogger().warn("Message: ${exception.message}")
             return emptyList()
         }
     }
