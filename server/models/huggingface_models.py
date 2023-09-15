@@ -56,6 +56,7 @@ def llama_model(text: str):
     model_name = "codellama/CodeLlama-7b-hf"
     tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
     model = LlamaForCausalLM.from_pretrained(model_name, quantization_config=nf4_config)
+    # model = LlamaForCausalLM.from_pretrained(model_name)
 
     pipeline = transformers.pipeline(
         "text-generation",
@@ -114,3 +115,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="codellama/CodeLlama-7b-hf")
     args = parser.parse_args()
+
