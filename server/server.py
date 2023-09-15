@@ -1,6 +1,13 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import argparse
 import json
+from models.huggingface_models import codet5_base_model, starcoder_model
+
+models = [{"model_name": "StarCoder"}, {"model_name": "codeT5-base"}]
+maper = {
+    "codeT5-base": codet5_base_model,
+    "StarCoder": starcoder_model
+}
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -13,15 +20,24 @@ class RequestHandler(BaseHTTPRequestHandler):
         self._set_headers()
         content_len = int(self.headers.get("Content-Length", 0))
         post_body = self.rfile.read(content_len)
-        text_received = post_body.decode("utf-8")
-        json_bytes = json.dumps({"text": text_received}).encode("utf-8")
+        json_data = json.loads(post_body)
+        text_received = json_data["prompt"]
+        model = maper(json_data["model"])
+        processed_texts = model(text_received, json_data["max_new_tokens"])
+        json_bytes = json.dumps(
+            {"results" : list(map(lambda x: {"text": x}, processed_texts))}
+        ).encode("utf-8")
         self.wfile.write(json_bytes)
+
+    def do_GET(self):
+        self._set_headers()
+        models_json = json.dumps({"models": models})
+        self.wfile.write(models_json.encode("utf-8"))
 
 
 def run(port, addr):
     server_address = (addr, port)
     httpd = HTTPServer(server_address, RequestHandler)
-
     print(f"Starting httpd server on {addr}:{port}")
     httpd.serve_forever()
 
