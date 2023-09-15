@@ -1,7 +1,11 @@
 package com.github.bzz.intellij.requests
 
-import com.github.bzz.intellij.com.github.bzz.intellij.requests.ServerResponse
+import com.github.bzz.intellij.com.github.bzz.intellij.models.AvailableModels
+import com.github.bzz.intellij.com.github.bzz.intellij.requests.ModelsResponse
+import com.github.bzz.intellij.com.github.bzz.intellij.requests.ProposalsQuery
+import com.github.bzz.intellij.com.github.bzz.intellij.requests.ProposalsResponse
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -11,30 +15,56 @@ import java.net.http.HttpTimeoutException
 
 
 object Requester {
+
+    const val MAX_TOKEN_LENGTH = 10
     open class RequesterException(message: String): RuntimeException("RequesterException: $message")
 
     private class NoListenerRequesterException(ip: String, port: Int):
         RequesterException("Probable cause: server $ip is not running or listening at port $port.")
 
-    private class TimeoutRequesterException():
-        RequesterException("Probable cause: new model is being downloaded currently.")
+    private class TimeoutRequesterException:
+        RequesterException("Probable cause: poor connection.")
 
     private class GeneralRequesterException(ip: String, port: Int, httpStatus: Int):
         RequesterException("HTTP Request to $ip:$port failed. Failure status code: $httpStatus")
 
-    private class LocationMissingException(ip: String):
-        RequesterException("Redirect response from $ip is missing Location header")
+    private class JsonRequesterException(ip: String, port: Int, answer: String?):
+        RequesterException("Response from $ip:$port has incompatible json: $answer")
+
+    private class NoLoadedLLMException:
+        RequesterException("No LLM is chosen due to the absence of any.")
 
 
     private val client = HttpClient.newBuilder().build()
 
-    fun getModelSuggestions(context: String, ip: String = "localhost", port: Int = 8000): ServerResponse {
+    fun getAvailableModels(ip: String = "localhost", port: Int = 8000): ModelsResponse {
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://$ip:$port"))
+            .GET()
+            .timeout(java.time.Duration.ofSeconds(10))
+            .build()
+
+        return serverQuery(ip, port, request, ModelsResponse::class.java)
+    }
+
+    fun getModelSuggestions(context: String, ip: String = "localhost", port: Int = 8000): ProposalsResponse {
+        val queryParams = ProposalsQuery(
+            model = AvailableModels.currentModel() ?: throw NoLoadedLLMException(),
+            prompt = context,
+            maxNewTokens = MAX_TOKEN_LENGTH
+        )
+        val json = Gson().toJson(queryParams)
         val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://$ip:$port"))
-                .POST(HttpRequest.BodyPublishers.ofString(context))
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .header("Content-type", "application/json")
                 .timeout(java.time.Duration.ofSeconds(10))
                 .build()
 
+        return serverQuery(ip, port, request, ProposalsResponse::class.java)
+    }
+
+    private fun <T> serverQuery(ip: String, port: Int, request: HttpRequest, serializableClass: Class<T>): T {
         val response = try {
             client.send(request, HttpResponse.BodyHandlers.ofString())
         } catch(toe: HttpTimeoutException) {
@@ -44,13 +74,10 @@ object Requester {
         }
 
         return when (response.statusCode()) {
-            200 -> Gson().fromJson(response.body(), ServerResponse::class.java)
-            301, 302, 303, 307 -> {
-                val newLocation = response.headers().firstValue("Location")
-                    .orElseThrow {
-                        LocationMissingException(ip)
-                    }
-                getModelSuggestions(context, newLocation)
+            200 -> try {
+                Gson().fromJson(response.body(), serializableClass)
+            } catch(jsonException: JsonSyntaxException) {
+                throw JsonRequesterException(ip, port, response.body())
             }
             else -> throw GeneralRequesterException(ip, port, response.statusCode())
         }

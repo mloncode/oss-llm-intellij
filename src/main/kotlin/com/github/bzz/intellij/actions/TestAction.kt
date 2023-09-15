@@ -13,6 +13,9 @@ class TestAction: AnAction() {
 
         val editor = event.getRequiredData(CommonDataKeys.EDITOR)
         val caretPosition = editor.caretModel.primaryCaret.selectionStart
-        logger.warn(Requester.getModelSuggestions(editor.document.text).text?.substring(0, caretPosition))
+        logger.warn(
+            Requester.getModelSuggestions(editor.document.text.substring(0, caretPosition)).
+                results.firstOrNull()?.text ?: "---"
+        )
     }
 }

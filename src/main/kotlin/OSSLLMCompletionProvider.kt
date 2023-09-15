@@ -4,28 +4,29 @@ import com.github.bzz.intellij.requests.Requester
 import com.intellij.codeInsight.inline.completion.InlineCompletionElement
 import com.intellij.codeInsight.inline.completion.InlineCompletionProvider
 import com.intellij.codeInsight.inline.completion.InlineCompletionRequest
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.event.DocumentEvent
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Experimental
 class OSSLLMCompletionProvider : InlineCompletionProvider {
 
-    override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> {
+    private val logger = Logger.getInstance("(when autocompleting)")
+
+    override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> =
         try {
             val caretPosition = request.startOffset
-            val proposal = Requester.getModelSuggestions(
+            val proposals = Requester.getModelSuggestions(
                 request.document.text.substring(0, caretPosition)
-            ).text ?: return emptyList()
-            return listOf(InlineCompletionElement(proposal))
+            )
+            proposals.results.map { InlineCompletionElement(it.text) }
         } catch (knownException: Requester.RequesterException) {
-            thisLogger().warn(knownException.message)
-            return emptyList()
+            logger.warn(knownException.message)
+            emptyList()
         } catch (exception: Exception) {
-            thisLogger().warn("Unknown exception. Message: ${exception.message}")
-            return emptyList()
+            logger.warn("Unknown exception. Message: ${exception.message}")
+            emptyList()
         }
-    }
 
     override fun isEnabled(event: DocumentEvent): Boolean {
         return true
