@@ -28,16 +28,16 @@ def codet5_base_model(text: str, max_len: int):
     model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base')
     input_ids = tokenizer(text, return_tensors="pt").input_ids
     generated_ids = model.generate(input_ids, max_length=max_len, do_sample=True, num_return_sequences=5)
-    return map(lambda prompt_ans: tokenizer.decode(prompt_ans, skip_special_tokens=True), generated_ids)
+    print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
 
 
 def starcoder_model(text: str, max_len: int):
     checkpoint = "bigcode/starcoderbase-1b"
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     model = AutoModelForCausalLM.from_pretrained(checkpoint)
-    input_ids = tokenizer(text, return_tensors="pt").input_ids
-    generated_ids = model.generate(input_ids, max_length=max_len, do_sample=True, num_return_sequences=5)
-    return map(lambda prompt_ans: tokenizer.decode(prompt_ans, skip_special_tokens=True), generated_ids)
+    inputs = tokenizer.encode(text, return_tensors="pt")
+    outputs = model.generate(inputs, max_length=max_len, do_sample=True, num_return_sequences=5)
+    print(tokenizer.decode(outputs[0]))
 
 
 def healing(tokenizer, model, prefix, outputs):
