@@ -8,7 +8,7 @@ from transformers import AutoModelForCausalLM
 import argparse
 import transformers
 import torch
-
+device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 # nf4_config = BitsAndBytesConfig(
 #     load_in_4bit=True,
 #     bnb_4bit_quant_type="nf4",
@@ -24,20 +24,25 @@ def read_from_file(path: str) -> str:
 
 
 def codet5_base_model(text: str, max_len: int):
+    global device
     tokenizer = RobertaTokenizer.from_pretrained('Salesforce/codet5-base')
-    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base')
-    input_ids = tokenizer(text, return_tensors="pt").input_ids
-    generated_ids = model.generate(input_ids, max_length=max_len, do_sample=True, num_return_sequences=5)
-    print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
+    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base').to(device)
+    input_ids = tokenizer(text, return_tensors="pt").input_ids.to(device)
+    generated_ids = model.generate(input_ids, max_length=max_len, do_sample=True, num_return_sequences=5).cpu()
+    print(generated_ids)
+    return map(lambda prompt_ans: tokenizer.decode(prompt_ans, skip_special_tokens=True), generated_ids)
 
 
 def starcoder_model(text: str, max_len: int):
+    global device
     checkpoint = "bigcode/starcoderbase-1b"
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-    model = AutoModelForCausalLM.from_pretrained(checkpoint)
-    inputs = tokenizer.encode(text, return_tensors="pt")
-    outputs = model.generate(inputs, max_length=max_len, do_sample=True, num_return_sequences=5)
-    print(tokenizer.decode(outputs[0]))
+    model = AutoModelForCausalLM.from_pretrained(checkpoint).to(device)
+    inputs = tokenizer.encode(text, return_tensors="pt").to(device)
+    outputs = model.generate(inputs, max_length=max_len, do_sample=True, num_return_sequences=5).cpu()
+    print(outputs)
+    print("sent")
+    return map(lambda prompt_ans: tokenizer.decode(prompt_ans, skip_special_tokens=True), outputs)
 
 
 def healing(tokenizer, model, prefix, outputs):
