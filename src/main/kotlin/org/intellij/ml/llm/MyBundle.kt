@@ -1,4 +1,4 @@
-package com.github.bzz.intellij
+package org.intellij.ml.llm
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

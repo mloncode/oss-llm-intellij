@@ -1,8 +1,8 @@
-package com.github.bzz.intellij.toolWindow
+package org.intellij.ml.llm.toolWindow
 
 import ai.grazie.utils.capitalize
-import com.github.bzz.intellij.com.github.bzz.intellij.models.AvailableModels.currentModelIndex
-import com.github.bzz.intellij.com.github.bzz.intellij.models.AvailableModels.modelsList
+import com.github.bzz.intellij.com.github.bzz.intellij.models.OSSLLMModels.currentModelIndex
+import com.github.bzz.intellij.com.github.bzz.intellij.models.OSSLLMModels.modelsList
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -17,13 +17,6 @@ import javax.swing.JPanel
 
 class LLMToolWindowFactory : ToolWindowFactory {
 
-    companion object {
-        val NO_LLM =
-            """Unfortunately, no applicable large language models are currently found. 
-                |You may try to stabilize your Internet connection and restart Intellij IDEA.""".trimMargin()
-    }
-
-
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val llmToolWindow = LLMToolWindow()
         val content = ContentFactory.getInstance().createContent(llmToolWindow.getContent(), null, false)
@@ -33,11 +26,12 @@ class LLMToolWindowFactory : ToolWindowFactory {
     override fun shouldBeAvailable(project: Project) = true
 
     class LLMToolWindow {
+        private val noLLM = "NO LLM found. ".trimMargin()
 
         fun getContent() = JBPanel<JBPanel<*>>().apply {
             layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
             val headerPanel = JPanel()
-            headerPanel.add(JBLabel(if (modelsList.isNotEmpty()) "Available models" else NO_LLM).apply {
+            headerPanel.add(JBLabel(if (modelsList.isNotEmpty()) "Available models" else noLLM).apply {
                 font = font.deriveFont(Font.BOLD)
             })
             add(headerPanel)

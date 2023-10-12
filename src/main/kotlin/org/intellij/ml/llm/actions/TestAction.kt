@@ -1,6 +1,6 @@
-package com.github.bzz.intellij.actions
+package org.intellij.ml.llm.actions
 
-import com.github.bzz.intellij.requests.Requester
+import org.intellij.ml.llm.server.OSSLLMServer
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -14,8 +14,8 @@ class TestAction: AnAction() {
         val editor = event.getRequiredData(CommonDataKeys.EDITOR)
         val caretPosition = editor.caretModel.primaryCaret.selectionStart
         logger.warn(
-            Requester.getModelSuggestions(editor.document.text.substring(0, caretPosition)).
-                results.firstOrNull()?.text ?: "---"
+            OSSLLMServer.getSuggestions(editor.document.text.substring(0, caretPosition)).
+                results.firstOrNull() ?: "---"
         )
     }
 }
