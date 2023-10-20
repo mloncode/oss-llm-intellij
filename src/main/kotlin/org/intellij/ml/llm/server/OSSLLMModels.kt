@@ -10,7 +10,7 @@ object OSSLLMModels {
     private val logger = thisLogger()
 
     val currentModelIndex = AtomicInteger(0)
-    val modelsList: List<String> = OSSLLMServer.getAvailableModels().models.map { it.modelName }
+    val modelsList: List<String> = OSSLLMServer.getAvailableModels().models
 
     fun currentModel() : String? {
         return modelsList.getOrNull(currentModelIndex.get())

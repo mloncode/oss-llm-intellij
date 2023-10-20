@@ -4,6 +4,12 @@
 [![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
 
+## Run model inference
+
+To run OSS LLM use:
+ * a simple local [inference server](./server).
+
+
 
 ## Plugin development
 
@@ -22,10 +28,6 @@
 
   Download the [latest release](https://github.com/mloncode/intellij/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
-## Running LLM Inference
-
-To run OSS LLM using a simple inference server follow instructions in [./server].
 
 
 <!-- Plugin description -->

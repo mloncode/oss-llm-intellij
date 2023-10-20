@@ -15,9 +15,9 @@ import java.net.http.HttpResponse
 object OSSLLMServer {
     private const val MAX_TOKEN_LENGTH = 10
 
+//    @Serializable data class LLMModel (@SerializedName("model_name") val modelName: String)
+    @Serializable data class LLMModelsResponse(val models: List<String>)
     @Serializable data class LLMResponse (val results: List<String>)
-    @Serializable data class LLMModelsResponse(val models: List<LLMModel>)
-    @Serializable data class LLMModel (@SerializedName("model_name") val modelName: String)
     @Serializable data class LLMRequest(
         val model: String,
         val prompt: String,
@@ -54,13 +54,14 @@ object OSSLLMServer {
 
     fun getAvailableModels(host: String = "localhost", port: Int = 8000): LLMModelsResponse {
         val url = URI.create("http://$host:$port")
-        val request = HttpRequest.newBuilder()
+        val getRequest = HttpRequest.newBuilder()
             .uri(url)
             .GET()
             .timeout(java.time.Duration.ofSeconds(10))
             .build()
 
-        return serverQuery(url.toString(), request, LLMModelsResponse::class.java)
+        val models = serverQuery(url.toString(), getRequest, LLMModelsResponse::class.java)
+        return models
     }
 
     fun getSuggestions(context: String, host: String = "localhost", port: Int = 8000): LLMResponse {
@@ -71,13 +72,13 @@ object OSSLLMServer {
         )
         val json = Gson().toJson(queryParams)
         val url = URI.create("http://$host:$port")
-        val request = HttpRequest.newBuilder()
+        val postRequest = HttpRequest.newBuilder()
             .uri(url)
             .POST(HttpRequest.BodyPublishers.ofString(json))
             .header("Content-type", "application/json")
             .timeout(java.time.Duration.ofSeconds(10))
             .build()
 
-        return serverQuery(url.toString(), request, LLMResponse::class.java)
+        return serverQuery(url.toString(), postRequest, LLMResponse::class.java)
     }
 }

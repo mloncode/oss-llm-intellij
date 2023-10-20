@@ -7,7 +7,7 @@ Internal hackathon version for IJ 2023.2
 
 ### Added
 - Initial scaffold from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
-- server.py & ghost/inline code completion provider
+- server.py, plugin for 2023.2 with ghost/inline code completion provider and a tool window
 
 
 ## [Unreleased]

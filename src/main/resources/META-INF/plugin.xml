@@ -9,7 +9,7 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="org.intellij.ml.llm.toolWindow.LLMToolWindowFactory" id="LLM"/>
+        <toolWindow factoryClass="org.intellij.ml.llm.toolWindow.LLMToolWindowFactory" id="OSS LLMs"/>
         <inline.completion.provider implementation="org.intellij.ml.llm.OSSLLMCompletionProvider"></inline.completion.provider>
     </extensions>
 
