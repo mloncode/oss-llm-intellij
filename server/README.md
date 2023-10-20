@@ -1,16 +1,15 @@
 # Python server
+
+Note: On macOS, MPS [requires](https://github.com/huggingface/transformers/issues/22502) Torch nightly.
+
 Usage:
 
-`python server.py [-p PORT] [-a HOSTNAME| address]`
+`python server.py -p 8080 --model`
 
-Default address is `localhost`, default port is `8000`
 
-Call to API using curl:
+Call the API using curl:
 
-`curl -X POST [ADDRESS]:[PORT] --data "your_text_here"`
+```sh
+curl -X POST localhost:8080/generate --data "{ 'prompt': 'def ping_with_back_off():\n  ' }"
+```
 
-In response json in form `{"text": "another_text_here"}` will be returned.
-
-Example:
-
-`python server.py -p 8000 -a localhost`

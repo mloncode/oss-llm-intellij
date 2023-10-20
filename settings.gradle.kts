@@ -1,1 +1,1 @@
-rootProject.name = "intellij"
+rootProject.name = "OSS LLM code completion"

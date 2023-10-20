@@ -1,32 +1,34 @@
-package com.github.bzz.intellij
+package org.intellij.ml.llm
 
-import com.github.bzz.intellij.requests.Requester
+import org.intellij.ml.llm.server.OSSLLMServer
 import com.intellij.codeInsight.inline.completion.InlineCompletionElement
 import com.intellij.codeInsight.inline.completion.InlineCompletionProvider
 import com.intellij.codeInsight.inline.completion.InlineCompletionRequest
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.event.DocumentEvent
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Experimental
 class OSSLLMCompletionProvider : InlineCompletionProvider {
 
-    private val logger = Logger.getInstance("(when autocompleting)")
+    private val logger = thisLogger()
 
-    override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> =
+    override suspend fun getProposals(request: InlineCompletionRequest): List<InlineCompletionElement> {
         try {
             val caretPosition = request.startOffset
-            val proposals = Requester.getModelSuggestions(
+            val proposals = OSSLLMServer.getSuggestions(
                 request.document.text.substring(0, caretPosition)
             )
-            proposals.results.map { InlineCompletionElement(it.text) }
-        } catch (knownException: Requester.RequesterException) {
+            return proposals.results.map { InlineCompletionElement(it) }
+        } catch (knownException: OSSLLMServer.ServerException) {
             logger.warn(knownException.message)
-            emptyList()
-        } catch (exception: Exception) {
-            logger.warn("Unknown exception. Message: ${exception.message}")
-            emptyList()
+            return emptyList()
         }
+//        catch (exception: Exception) {
+//            logger.warn("Unknown exception. Message: ${exception.message}")
+//            return emptyList()
+//        }
+    }
 
     override fun isEnabled(event: DocumentEvent): Boolean {
         return true

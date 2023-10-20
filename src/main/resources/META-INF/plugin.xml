@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.bzz.intellij</id>
-    <name>AutocompletionLLM</name>
+    <id>org.intellij.ml.llm</id>
+    <name>OSS LLM code completion</name>
     <vendor>bzz</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -9,15 +9,12 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.bzz.intellij.toolWindow.LLMToolWindowFactory" id="LLM"/>
-        <inline.completion.provider implementation="com.github.bzz.intellij.OSSLLMCompletionProvider"></inline.completion.provider>
+        <toolWindow factoryClass="org.intellij.ml.llm.toolWindow.LLMToolWindowFactory" id="OSS LLMs"/>
+        <inline.completion.provider implementation="org.intellij.ml.llm.OSSLLMCompletionProvider"></inline.completion.provider>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.bzz.intellij.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
     <actions>
-        <action id="com.github.bzz.intellij.actions.TestAction" class="com.github.bzz.intellij.actions.TestAction"
+        <action id="org.intellij.ml.llm.actions.TestAction" class="org.intellij.ml.llm.actions.TestAction"
                 text="TEST" description="Tests that connection works properly">
             <add-to-group group-id="HelpMenu" anchor="first"/>
         </action>
